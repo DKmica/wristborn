@@ -12,8 +12,9 @@ android {
         applicationId = "com.wristborn.app"
         minSdk = 26
         targetSdk = 34
+
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1.0"
     }
 
     buildTypes {
@@ -24,38 +25,61 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = false
+        }
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
+
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2024.09.03")
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-
+    // Core
     implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.activity:activity-compose:1.9.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
-    implementation("androidx.wear.compose:compose-material:1.4.0")
-    implementation("androidx.wear.compose:compose-navigation:1.4.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
 
-    implementation("androidx.wear.tiles:tiles:1.4.1")
-    implementation("androidx.wear.watchface:watchface-complications-data-source:1.2.1")
+    // Activity for Compose
+    implementation("androidx.activity:activity-compose:1.9.1")
 
+    // Compose BOM (aligns Compose UI artifacts)
+    implementation(platform("androidx.compose:compose-bom:2024.06.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // Wear Compose UI
+    implementation("androidx.wear.compose:compose-material:1.4.1")
+    implementation("androidx.wear.compose:compose-foundation:1.4.1")
+
+    // ✅ Wear swipe-dismiss navigation (fixes rememberSwipeDismissableNavController, SwipeDismissableNavHost, composable)
+    implementation("androidx.wear.compose:compose-navigation:1.4.1")
+
+    // Optional: standard navigation-compose (safe to keep, we can remove later if you want)
+    implementation("androidx.navigation:navigation-compose:2.8.0")
+
+    // Tiles (template)
+    implementation("androidx.wear.tiles:tiles:1.3.0")
+    implementation("androidx.wear.tiles:tiles-material:1.3.0")
+    debugImplementation("androidx.wear.tiles:tiles-tooling-preview:1.3.0")
+
+    // Complication data source (template)
+    implementation("androidx.wear.watchface:watchface-complications-data-source:1.2.1")
 }
+

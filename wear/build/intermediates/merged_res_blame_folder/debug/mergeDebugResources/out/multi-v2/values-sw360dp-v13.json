@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.wristborn.app.wear-mergeDebugResources-68:/values-sw360dp-v13/values-sw360dp-v13.xml",
+            "outputFile": "com.wristborn.app.wear-mergeDebugResources-69:/values-sw360dp-v13/values-sw360dp-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\dakoe\\.gradle\\caches\\9.0.0\\transforms\\6132f2285b0bafd0ebf3e7ff3d602430\\transformed\\preference-1.1.0\\res\\values-sw360dp-v13\\values-sw360dp-v13.xml",
+                    "source": "C:\\Users\\dakoe\\.gradle\\caches\\9.2.1\\transforms\\32543c939ade5c340a19e00fcafc4e46\\workspace\\transformed\\preference-1.1.0\\res\\values-sw360dp-v13\\values-sw360dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
