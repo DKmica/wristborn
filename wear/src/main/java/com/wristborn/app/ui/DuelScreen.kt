@@ -34,6 +34,9 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.ScalingLazyColumn
 import androidx.wear.compose.material.Text
 import com.wristborn.app.engine.Element
+import com.wristborn.app.engine.FormType
+import com.wristborn.app.engine.SigilToken
+import com.wristborn.app.engine.Spell
 import com.wristborn.app.engine.SigilToken
 import com.wristborn.app.haptics.ElementHapticsPlayer
 import com.wristborn.app.haptics.HapticRhythmPlayer
@@ -46,6 +49,7 @@ private const val LONG_PRESS_THRESHOLD_MS = 220L
 fun DuelScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val sigilPattern = remember { mutableStateListOf<SigilToken>() }
+    val formTapTimesMs = remember { mutableStateListOf<Long>() }
     val hapticsPlayer = remember(context) { HapticRhythmPlayer(context) }
     val elementHapticsPlayer = remember(context) { ElementHapticsPlayer(context) }
     val gestureRecognizer = remember { GestureRecognizer() }
@@ -53,6 +57,36 @@ fun DuelScreen(onBack: () -> Unit) {
     var awaitingElement by remember { mutableStateOf(false) }
     var selectedElement by remember { mutableStateOf<Element?>(null) }
 
+    var awaitingForm by remember { mutableStateOf(false) }
+    var selectedForm by remember { mutableStateOf<FormType?>(null) }
+
+    var awaitingRelease by remember { mutableStateOf(false) }
+    var releaseGesture by remember { mutableStateOf<GestureType?>(null) }
+    var latestSpell by remember { mutableStateOf<Spell?>(null) }
+
+    DuelSensorsEffect(
+        context = context,
+        enabled = awaitingElement || awaitingRelease,
+        onGestureDetected = { gestureType, confidence ->
+            if (confidence < GestureRecognizer.MIN_CONFIDENCE) return@DuelSensorsEffect
+
+            if (awaitingElement && selectedElement == null) {
+                selectedElement = gestureType.toElement()
+                awaitingElement = false
+                awaitingForm = true
+                elementHapticsPlayer.playElementSignature(selectedElement ?: return@DuelSensorsEffect)
+            } else if (awaitingRelease && selectedElement != null && selectedForm != null && releaseGesture == null) {
+                releaseGesture = gestureType
+                awaitingRelease = false
+                latestSpell = Spell(
+                    sigil = sigilPattern.toList(),
+                    element = selectedElement ?: return@DuelSensorsEffect,
+                    form = selectedForm ?: return@DuelSensorsEffect,
+                    release = gestureType,
+                    timestampMs = System.currentTimeMillis()
+                )
+                elementHapticsPlayer.playFormAccent(selectedForm ?: return@DuelSensorsEffect)
+                elementHapticsPlayer.playReleaseConfirm(selectedElement ?: return@DuelSensorsEffect)
     DuelSensorsEffect(
         context = context,
         enabled = awaitingElement && selectedElement == null,
@@ -87,6 +121,7 @@ fun DuelScreen(onBack: () -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         item {
+            Text(text = "Sigil Field", style = MaterialTheme.typography.title3)
             Text(
                 text = "Sigil Field",
                 style = MaterialTheme.typography.title3
@@ -107,6 +142,14 @@ fun DuelScreen(onBack: () -> Unit) {
         item {
             Button(onClick = {
                 sigilPattern.clear()
+                formTapTimesMs.clear()
+                awaitingElement = false
+                awaitingForm = false
+                awaitingRelease = false
+                selectedElement = null
+                selectedForm = null
+                releaseGesture = null
+                latestSpell = null
                 awaitingElement = false
                 selectedElement = null
             }) {
@@ -119,6 +162,13 @@ fun DuelScreen(onBack: () -> Unit) {
                 onClick = {
                     hapticsPlayer.playSigil(sigilPattern.toList())
                     awaitingElement = true
+                    awaitingForm = false
+                    awaitingRelease = false
+                    selectedElement = null
+                    selectedForm = null
+                    releaseGesture = null
+                    latestSpell = null
+                    formTapTimesMs.clear()
                     selectedElement = null
                 }
             ) {
@@ -129,6 +179,15 @@ fun DuelScreen(onBack: () -> Unit) {
             item { Text("Perform Element Gesture") }
         }
 
+        item { Text("Element: ${selectedElement?.name ?: "None"}") }
+
+        item {
+            DebugElementButtons(
+                enabled = awaitingElement,
+                onPick = { picked ->
+                    selectedElement = picked
+                    awaitingElement = false
+                    awaitingForm = true
         item {
             Text("Element: ${selectedElement?.name ?: "None"}")
         }
@@ -141,6 +200,45 @@ fun DuelScreen(onBack: () -> Unit) {
                     elementHapticsPlayer.playElementSignature(picked)
                 }
             )
+        }
+
+        if (awaitingForm || selectedForm != null) {
+            item {
+                Text(if (selectedForm == null) "Tap Form Pattern" else "Form: ${selectedForm?.name}")
+            }
+            item {
+                Button(
+                    enabled = awaitingForm,
+                    onClick = { formTapTimesMs += System.currentTimeMillis() }
+                ) {
+                    Text("Form Tap")
+                }
+            }
+            item { Text("Form taps: ${formTapTimesMs.size}") }
+            item {
+                Button(
+                    enabled = awaitingForm && formTapTimesMs.isNotEmpty(),
+                    onClick = {
+                        selectedForm = classifyForm(formTapTimesMs.toList())
+                        awaitingForm = false
+                        awaitingRelease = true
+                        elementHapticsPlayer.playFormAccent(selectedForm ?: return@Button)
+                    }
+                ) {
+                    Text("Submit Form")
+                }
+            }
+        }
+
+        if (awaitingRelease) {
+            item { Text("Perform Release Gesture") }
+        }
+        item { Text("Release: ${releaseGesture?.name ?: "None"}") }
+
+        latestSpell?.let { spell ->
+            item {
+                Text("Spell Cast! ${spell.element.name} ${spell.form.name} ${spell.release.name}")
+            }
         }
 
         item { Text("Duel (placeholder)") }
@@ -171,6 +269,17 @@ private fun DuelSensorsEffect(
                 override fun onSensorChanged(event: SensorEvent) {
                     val timestampMs = event.timestamp / 1_000_000L
                     val result = when (event.sensor.type) {
+                        Sensor.TYPE_ACCELEROMETER -> gestureRecognizer.onAccelerometer(
+                            ax = event.values[0],
+                            ay = event.values[1],
+                            az = event.values[2],
+                            timestampMs = timestampMs
+                        )
+
+                        Sensor.TYPE_GYROSCOPE -> gestureRecognizer.onGyroscope(
+                            gz = event.values[2],
+                            timestampMs = timestampMs
+                        )
                         Sensor.TYPE_ACCELEROMETER -> {
                             gestureRecognizer.onAccelerometer(
                                 ax = event.values[0],
@@ -197,6 +306,8 @@ private fun DuelSensorsEffect(
                 override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
             }
 
+            accelSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
+            gyroSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
             if (accelSensor != null) {
                 sensorManager.registerListener(listener, accelSensor, SensorManager.SENSOR_DELAY_GAME)
             }
@@ -212,11 +323,21 @@ private fun DuelSensorsEffect(
 }
 
 @Composable
+private fun DebugElementButtons(
+    enabled: Boolean,
+    onPick: (Element) -> Unit
+) {
 private fun DebugElementButtons(onPick: (Element) -> Unit) {
     ScalingLazyColumn(
         modifier = Modifier.height(160.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        item { Button(enabled = enabled, onClick = { onPick(Element.FIRE) }) { Text("FIRE") } }
+        item { Button(enabled = enabled, onClick = { onPick(Element.WIND) }) { Text("WIND") } }
+        item { Button(enabled = enabled, onClick = { onPick(Element.ARCANE) }) { Text("ARCANE") } }
+        item { Button(enabled = enabled, onClick = { onPick(Element.VOID) }) { Text("VOID") } }
+        item { Button(enabled = enabled, onClick = { onPick(Element.STORM) }) { Text("STORM") } }
+        item { Button(enabled = enabled, onClick = { onPick(Element.EARTH) }) { Text("EARTH") } }
         item { Button(onClick = { onPick(Element.FIRE) }) { Text("FIRE") } }
         item { Button(onClick = { onPick(Element.WIND) }) { Text("WIND") } }
         item { Button(onClick = { onPick(Element.ARCANE) }) { Text("ARCANE") } }
@@ -253,6 +374,23 @@ private fun SigilCapturePad(
         contentAlignment = Alignment.Center
     ) {
         Text(text = "Tap / Hold")
+    }
+}
+
+private fun classifyForm(timestampsMs: List<Long>): FormType {
+    if (timestampsMs.isEmpty()) return FormType.SINGLE
+    if (timestampsMs.size == 1) return FormType.SINGLE
+
+    val intervals = timestampsMs.zipWithNext { a, b -> b - a }
+    val avgInterval = intervals.average()
+
+    return when {
+        timestampsMs.size >= 4 -> FormType.MULTI
+        timestampsMs.size == 3 && avgInterval < 220 -> FormType.PIERCING
+        timestampsMs.size == 2 && avgInterval < 180 -> FormType.BURST
+        avgInterval > 520 -> FormType.CHARGED
+        avgInterval > 300 -> FormType.DELAYED
+        else -> FormType.BURST
     }
 }
 
