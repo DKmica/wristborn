@@ -66,6 +66,19 @@ fun DuelScreen(onBack: () -> Unit) {
         gestureRecognizer = gestureRecognizer
     )
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ScalingLazyColumn
+import androidx.wear.compose.material.Text
+
+@Composable
+fun DuelScreen(onBack: () -> Unit) {
     ScalingLazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -130,6 +143,7 @@ fun DuelScreen(onBack: () -> Unit) {
             )
         }
 
+        item { Text("Duel (placeholder)") }
         item {
             Button(onClick = onBack) {
                 Text("Back")
