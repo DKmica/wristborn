@@ -9,6 +9,7 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.wristborn.app.ui.ArenaIdleScreen
 import com.wristborn.app.ui.DuelScreen
+import com.wristborn.app.ui.Routes
 import com.wristborn.app.ui.TrainingScreen
 
 class MainActivity : ComponentActivity() {
@@ -26,18 +27,18 @@ fun WristbornApp() {
 
     SwipeDismissableNavHost(
         navController = navController,
-        startDestination = "arena"
+        startDestination = Routes.ARENA
     ) {
-        composable("arena") {
+        composable(Routes.ARENA) {
             ArenaIdleScreen(
-                onTraining = { navController.navigate("training") },
-                onPractice = { navController.navigate("duel") }
+                onTraining = { navController.navigate(Routes.TRAINING) },
+                onPractice = { navController.navigate(Routes.DUEL) }
             )
         }
-        composable("training") {
+        composable(Routes.TRAINING) {
             TrainingScreen(onBack = { navController.popBackStack() })
         }
-        composable("duel") {
+        composable(Routes.DUEL) {
             DuelScreen(onBack = { navController.popBackStack() })
         }
     }
