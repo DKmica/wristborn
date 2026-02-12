@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.awaitFirstDown
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +47,7 @@ import com.wristborn.app.engine.Element
 import com.wristborn.app.engine.FormType
 import com.wristborn.app.engine.SigilToken
 import com.wristborn.app.engine.Spell
+import com.wristborn.app.engine.SigilToken
 import com.wristborn.app.haptics.ElementHapticsPlayer
 import com.wristborn.app.haptics.HapticRhythmPlayer
 import com.wristborn.app.sensors.GestureRecognizer
@@ -69,6 +71,13 @@ fun DuelScreen(onBack: () -> Unit) {
     var selectedElement by remember { mutableStateOf<Element?>(null) }
     var awaitingForm by remember { mutableStateOf(false) }
     var selectedForm by remember { mutableStateOf<FormType?>(null) }
+
+    var awaitingElement by remember { mutableStateOf(false) }
+    var selectedElement by remember { mutableStateOf<Element?>(null) }
+
+    var awaitingForm by remember { mutableStateOf(false) }
+    var selectedForm by remember { mutableStateOf<FormType?>(null) }
+
     var awaitingRelease by remember { mutableStateOf(false) }
     var releaseGesture by remember { mutableStateOf<GestureType?>(null) }
     var latestSpell by remember { mutableStateOf<Spell?>(null) }
@@ -85,6 +94,12 @@ fun DuelScreen(onBack: () -> Unit) {
         enabled = (awaitingElement || awaitingRelease) && !duel.isFinished,
         onGestureDetected = { gestureType, confidence ->
             if (confidence < GestureRecognizer.MIN_CONFIDENCE) return@DuelSensorsEffect
+    DuelSensorsEffect(
+        context = context,
+        enabled = awaitingElement || awaitingRelease,
+        onGestureDetected = { gestureType, confidence ->
+            if (confidence < GestureRecognizer.MIN_CONFIDENCE) return@DuelSensorsEffect
+
             if (awaitingElement && selectedElement == null) {
                 selectedElement = gestureType.toElement()
                 awaitingElement = false
@@ -103,6 +118,14 @@ fun DuelScreen(onBack: () -> Unit) {
                 elementHapticsPlayer.playFormAccent(selectedForm ?: return@DuelSensorsEffect)
                 elementHapticsPlayer.playReleaseConfirm(selectedElement ?: return@DuelSensorsEffect)
                 duel = duelEngine.applyPlayerSpell(latestSpell ?: return@DuelSensorsEffect)
+    DuelSensorsEffect(
+        context = context,
+        enabled = awaitingElement && selectedElement == null,
+        onGestureDetected = { gestureType, confidence ->
+            if (confidence >= GestureRecognizer.MIN_CONFIDENCE && selectedElement == null) {
+                selectedElement = gestureType.toElement()
+                awaitingElement = false
+                elementHapticsPlayer.playElementSignature(selectedElement ?: return@DuelSensorsEffect)
             }
         },
         gestureRecognizer = gestureRecognizer
@@ -124,6 +147,43 @@ fun DuelScreen(onBack: () -> Unit) {
         }
         item {
             val debugPattern = sigilPattern.joinToString(" ") { if (it == SigilToken.SHORT) "•" else "—" }.ifEmpty { "(empty)" }
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ScalingLazyColumn
+import androidx.wear.compose.material.Text
+
+@Composable
+fun DuelScreen(onBack: () -> Unit) {
+    ScalingLazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        item {
+            Text(text = "Sigil Field", style = MaterialTheme.typography.title3)
+            Text(
+                text = "Sigil Field",
+                style = MaterialTheme.typography.title3
+            )
+        }
+        item {
+            SigilCapturePad(
+                onShortTap = { sigilPattern += SigilToken.SHORT },
+                onLongPress = { sigilPattern += SigilToken.LONG }
+            )
+        }
+        item {
+            val debugPattern = sigilPattern.joinToString(" ") { token ->
+                if (token == SigilToken.SHORT) "•" else "—"
+            }.ifEmpty { "(empty)" }
             Text(debugPattern)
         }
         item {
@@ -194,6 +254,112 @@ private fun DuelRings(snapshot: DuelSnapshot) {
             size = Size(size.width - 20f, size.height - 20f),
             style = Stroke(width = 6f, cap = StrokeCap.Round)
         )
+                sigilPattern.clear()
+                formTapTimesMs.clear()
+                awaitingElement = false
+                awaitingForm = false
+                awaitingRelease = false
+                selectedElement = null
+                selectedForm = null
+                releaseGesture = null
+                latestSpell = null
+                awaitingElement = false
+                selectedElement = null
+            }) {
+                Text("Clear")
+            }
+        }
+        item {
+            Button(
+                enabled = sigilPattern.isNotEmpty(),
+                onClick = {
+                    hapticsPlayer.playSigil(sigilPattern.toList())
+                    awaitingElement = true
+                    awaitingForm = false
+                    awaitingRelease = false
+                    selectedElement = null
+                    selectedForm = null
+                    releaseGesture = null
+                    latestSpell = null
+                    formTapTimesMs.clear()
+                    selectedElement = null
+                }
+            ) {
+                Text("Submit Sigil")
+            }
+        }
+        if (awaitingElement) {
+            item { Text("Perform Element Gesture") }
+        }
+
+        item { Text("Element: ${selectedElement?.name ?: "None"}") }
+
+        item {
+            DebugElementButtons(
+                enabled = awaitingElement,
+                onPick = { picked ->
+                    selectedElement = picked
+                    awaitingElement = false
+                    awaitingForm = true
+        item {
+            Text("Element: ${selectedElement?.name ?: "None"}")
+        }
+
+        item {
+            DebugElementButtons(
+                onPick = { picked ->
+                    selectedElement = picked
+                    awaitingElement = false
+                    elementHapticsPlayer.playElementSignature(picked)
+                }
+            )
+        }
+
+        if (awaitingForm || selectedForm != null) {
+            item {
+                Text(if (selectedForm == null) "Tap Form Pattern" else "Form: ${selectedForm?.name}")
+            }
+            item {
+                Button(
+                    enabled = awaitingForm,
+                    onClick = { formTapTimesMs += System.currentTimeMillis() }
+                ) {
+                    Text("Form Tap")
+                }
+            }
+            item { Text("Form taps: ${formTapTimesMs.size}") }
+            item {
+                Button(
+                    enabled = awaitingForm && formTapTimesMs.isNotEmpty(),
+                    onClick = {
+                        selectedForm = classifyForm(formTapTimesMs.toList())
+                        awaitingForm = false
+                        awaitingRelease = true
+                        elementHapticsPlayer.playFormAccent(selectedForm ?: return@Button)
+                    }
+                ) {
+                    Text("Submit Form")
+                }
+            }
+        }
+
+        if (awaitingRelease) {
+            item { Text("Perform Release Gesture") }
+        }
+        item { Text("Release: ${releaseGesture?.name ?: "None"}") }
+
+        latestSpell?.let { spell ->
+            item {
+                Text("Spell Cast! ${spell.element.name} ${spell.form.name} ${spell.release.name}")
+            }
+        }
+
+        item { Text("Duel (placeholder)") }
+        item {
+            Button(onClick = onBack) {
+                Text("Back")
+            }
+        }
     }
 }
 
@@ -209,6 +375,13 @@ private fun DuelSensorsEffect(
             val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
             val gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+        if (!enabled) {
+            onDispose { }
+        } else {
+            val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            val accelSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+            val gyroSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
+
             val listener = object : SensorEventListener {
                 override fun onSensorChanged(event: SensorEvent) {
                     val timestampMs = event.timestamp / 1_000_000L
@@ -224,6 +397,55 @@ private fun DuelSensorsEffect(
             accelSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
             gyroSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
             onDispose { sensorManager.unregisterListener(listener) }
+                        Sensor.TYPE_ACCELEROMETER -> gestureRecognizer.onAccelerometer(
+                            ax = event.values[0],
+                            ay = event.values[1],
+                            az = event.values[2],
+                            timestampMs = timestampMs
+                        )
+
+                        Sensor.TYPE_GYROSCOPE -> gestureRecognizer.onGyroscope(
+                            gz = event.values[2],
+                            timestampMs = timestampMs
+                        )
+                        Sensor.TYPE_ACCELEROMETER -> {
+                            gestureRecognizer.onAccelerometer(
+                                ax = event.values[0],
+                                ay = event.values[1],
+                                az = event.values[2],
+                                timestampMs = timestampMs
+                            )
+                        }
+
+                        Sensor.TYPE_GYROSCOPE -> {
+                            gestureRecognizer.onGyroscope(
+                                gz = event.values[2],
+                                timestampMs = timestampMs
+                            )
+                        }
+
+                        else -> null
+                    }
+                    if (result != null) {
+                        onGestureDetected(result.type, result.confidence)
+                    }
+                }
+
+                override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
+            }
+
+            accelSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
+            gyroSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
+            if (accelSensor != null) {
+                sensorManager.registerListener(listener, accelSensor, SensorManager.SENSOR_DELAY_GAME)
+            }
+            if (gyroSensor != null) {
+                sensorManager.registerListener(listener, gyroSensor, SensorManager.SENSOR_DELAY_GAME)
+            }
+
+            onDispose {
+                sensorManager.unregisterListener(listener)
+            }
         }
     }
 }
@@ -231,12 +453,27 @@ private fun DuelSensorsEffect(
 @Composable
 private fun DebugElementButtons(enabled: Boolean, onPick: (Element) -> Unit) {
     ScalingLazyColumn(modifier = Modifier.height(160.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+private fun DebugElementButtons(
+    enabled: Boolean,
+    onPick: (Element) -> Unit
+) {
+private fun DebugElementButtons(onPick: (Element) -> Unit) {
+    ScalingLazyColumn(
+        modifier = Modifier.height(160.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         item { Button(enabled = enabled, onClick = { onPick(Element.FIRE) }) { Text("FIRE") } }
         item { Button(enabled = enabled, onClick = { onPick(Element.WIND) }) { Text("WIND") } }
         item { Button(enabled = enabled, onClick = { onPick(Element.ARCANE) }) { Text("ARCANE") } }
         item { Button(enabled = enabled, onClick = { onPick(Element.VOID) }) { Text("VOID") } }
         item { Button(enabled = enabled, onClick = { onPick(Element.STORM) }) { Text("STORM") } }
         item { Button(enabled = enabled, onClick = { onPick(Element.EARTH) }) { Text("EARTH") } }
+        item { Button(onClick = { onPick(Element.FIRE) }) { Text("FIRE") } }
+        item { Button(onClick = { onPick(Element.WIND) }) { Text("WIND") } }
+        item { Button(onClick = { onPick(Element.ARCANE) }) { Text("ARCANE") } }
+        item { Button(onClick = { onPick(Element.VOID) }) { Text("VOID") } }
+        item { Button(onClick = { onPick(Element.STORM) }) { Text("STORM") } }
+        item { Button(onClick = { onPick(Element.EARTH) }) { Text("EARTH") } }
     }
 }
 
@@ -244,6 +481,14 @@ private fun DebugElementButtons(enabled: Boolean, onPick: (Element) -> Unit) {
 private fun SigilCapturePad(onShortTap: () -> Unit, onLongPress: () -> Unit) {
     Box(
         modifier = Modifier.width(140.dp).height(72.dp)
+private fun SigilCapturePad(
+    onShortTap: () -> Unit,
+    onLongPress: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .width(140.dp)
+            .height(72.dp)
             .background(color = Color.DarkGray, shape = RoundedCornerShape(12.dp))
             .pointerInput(Unit) {
                 awaitEachGesture {
@@ -252,6 +497,11 @@ private fun SigilCapturePad(onShortTap: () -> Unit, onLongPress: () -> Unit) {
                     if (up != null) {
                         val pressDuration = up.uptimeMillis - down.uptimeMillis
                         if (pressDuration >= LONG_PRESS_THRESHOLD_MS) onLongPress() else onShortTap()
+                        if (pressDuration >= LONG_PRESS_THRESHOLD_MS) {
+                            onLongPress()
+                        } else {
+                            onShortTap()
+                        }
                     }
                 }
             },
@@ -263,6 +513,18 @@ private fun classifyForm(timestampsMs: List<Long>): FormType {
     if (timestampsMs.size <= 1) return FormType.SINGLE
     val intervals = timestampsMs.zipWithNext { a, b -> b - a }
     val avgInterval = intervals.average()
+    ) {
+        Text(text = "Tap / Hold")
+    }
+}
+
+private fun classifyForm(timestampsMs: List<Long>): FormType {
+    if (timestampsMs.isEmpty()) return FormType.SINGLE
+    if (timestampsMs.size == 1) return FormType.SINGLE
+
+    val intervals = timestampsMs.zipWithNext { a, b -> b - a }
+    val avgInterval = intervals.average()
+
     return when {
         timestampsMs.size >= 4 -> FormType.MULTI
         timestampsMs.size == 3 && avgInterval < 220 -> FormType.PIERCING
@@ -280,4 +542,13 @@ private fun GestureType.toElement(): Element = when (this) {
     GestureType.TWIST_CCW -> Element.VOID
     GestureType.SHAKE -> Element.STORM
     GestureType.STEADY_HOLD -> Element.EARTH
+private fun GestureType.toElement(): Element {
+    return when (this) {
+        GestureType.FLICK_RIGHT -> Element.FIRE
+        GestureType.FLICK_LEFT -> Element.WIND
+        GestureType.TWIST_CW -> Element.ARCANE
+        GestureType.TWIST_CCW -> Element.VOID
+        GestureType.SHAKE -> Element.STORM
+        GestureType.STEADY_HOLD -> Element.EARTH
+    }
 }
