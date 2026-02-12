@@ -37,6 +37,7 @@ import com.wristborn.app.engine.Element
 import com.wristborn.app.engine.FormType
 import com.wristborn.app.engine.SigilToken
 import com.wristborn.app.engine.Spell
+import com.wristborn.app.engine.SigilToken
 import com.wristborn.app.haptics.ElementHapticsPlayer
 import com.wristborn.app.haptics.HapticRhythmPlayer
 import com.wristborn.app.sensors.GestureRecognizer
@@ -86,11 +87,32 @@ fun DuelScreen(onBack: () -> Unit) {
                 )
                 elementHapticsPlayer.playFormAccent(selectedForm ?: return@DuelSensorsEffect)
                 elementHapticsPlayer.playReleaseConfirm(selectedElement ?: return@DuelSensorsEffect)
+    DuelSensorsEffect(
+        context = context,
+        enabled = awaitingElement && selectedElement == null,
+        onGestureDetected = { gestureType, confidence ->
+            if (confidence >= GestureRecognizer.MIN_CONFIDENCE && selectedElement == null) {
+                selectedElement = gestureType.toElement()
+                awaitingElement = false
+                elementHapticsPlayer.playElementSignature(selectedElement ?: return@DuelSensorsEffect)
             }
         },
         gestureRecognizer = gestureRecognizer
     )
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.ScalingLazyColumn
+import androidx.wear.compose.material.Text
+
+@Composable
+fun DuelScreen(onBack: () -> Unit) {
     ScalingLazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -100,6 +122,10 @@ fun DuelScreen(onBack: () -> Unit) {
     ) {
         item {
             Text(text = "Sigil Field", style = MaterialTheme.typography.title3)
+            Text(
+                text = "Sigil Field",
+                style = MaterialTheme.typography.title3
+            )
         }
         item {
             SigilCapturePad(
@@ -124,6 +150,8 @@ fun DuelScreen(onBack: () -> Unit) {
                 selectedForm = null
                 releaseGesture = null
                 latestSpell = null
+                awaitingElement = false
+                selectedElement = null
             }) {
                 Text("Clear")
             }
@@ -141,6 +169,7 @@ fun DuelScreen(onBack: () -> Unit) {
                     releaseGesture = null
                     latestSpell = null
                     formTapTimesMs.clear()
+                    selectedElement = null
                 }
             ) {
                 Text("Submit Sigil")
@@ -159,6 +188,15 @@ fun DuelScreen(onBack: () -> Unit) {
                     selectedElement = picked
                     awaitingElement = false
                     awaitingForm = true
+        item {
+            Text("Element: ${selectedElement?.name ?: "None"}")
+        }
+
+        item {
+            DebugElementButtons(
+                onPick = { picked ->
+                    selectedElement = picked
+                    awaitingElement = false
                     elementHapticsPlayer.playElementSignature(picked)
                 }
             )
@@ -203,6 +241,7 @@ fun DuelScreen(onBack: () -> Unit) {
             }
         }
 
+        item { Text("Duel (placeholder)") }
         item {
             Button(onClick = onBack) {
                 Text("Back")
@@ -241,6 +280,21 @@ private fun DuelSensorsEffect(
                             gz = event.values[2],
                             timestampMs = timestampMs
                         )
+                        Sensor.TYPE_ACCELEROMETER -> {
+                            gestureRecognizer.onAccelerometer(
+                                ax = event.values[0],
+                                ay = event.values[1],
+                                az = event.values[2],
+                                timestampMs = timestampMs
+                            )
+                        }
+
+                        Sensor.TYPE_GYROSCOPE -> {
+                            gestureRecognizer.onGyroscope(
+                                gz = event.values[2],
+                                timestampMs = timestampMs
+                            )
+                        }
 
                         else -> null
                     }
@@ -254,6 +308,12 @@ private fun DuelSensorsEffect(
 
             accelSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
             gyroSensor?.let { sensorManager.registerListener(listener, it, SensorManager.SENSOR_DELAY_GAME) }
+            if (accelSensor != null) {
+                sensorManager.registerListener(listener, accelSensor, SensorManager.SENSOR_DELAY_GAME)
+            }
+            if (gyroSensor != null) {
+                sensorManager.registerListener(listener, gyroSensor, SensorManager.SENSOR_DELAY_GAME)
+            }
 
             onDispose {
                 sensorManager.unregisterListener(listener)
@@ -267,6 +327,7 @@ private fun DebugElementButtons(
     enabled: Boolean,
     onPick: (Element) -> Unit
 ) {
+private fun DebugElementButtons(onPick: (Element) -> Unit) {
     ScalingLazyColumn(
         modifier = Modifier.height(160.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -277,6 +338,12 @@ private fun DebugElementButtons(
         item { Button(enabled = enabled, onClick = { onPick(Element.VOID) }) { Text("VOID") } }
         item { Button(enabled = enabled, onClick = { onPick(Element.STORM) }) { Text("STORM") } }
         item { Button(enabled = enabled, onClick = { onPick(Element.EARTH) }) { Text("EARTH") } }
+        item { Button(onClick = { onPick(Element.FIRE) }) { Text("FIRE") } }
+        item { Button(onClick = { onPick(Element.WIND) }) { Text("WIND") } }
+        item { Button(onClick = { onPick(Element.ARCANE) }) { Text("ARCANE") } }
+        item { Button(onClick = { onPick(Element.VOID) }) { Text("VOID") } }
+        item { Button(onClick = { onPick(Element.STORM) }) { Text("STORM") } }
+        item { Button(onClick = { onPick(Element.EARTH) }) { Text("EARTH") } }
     }
 }
 

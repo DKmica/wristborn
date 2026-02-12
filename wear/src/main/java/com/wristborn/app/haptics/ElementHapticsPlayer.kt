@@ -47,6 +47,7 @@ class ElementHapticsPlayer(context: Context) {
     }
 
     private fun vibrateWaveform(timings: LongArray) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val amplitudes = IntArray(timings.size) { index ->
                 if (index % 2 == 0) 0 else VibrationEffect.DEFAULT_AMPLITUDE
