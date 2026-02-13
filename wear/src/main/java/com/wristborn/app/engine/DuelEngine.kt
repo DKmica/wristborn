@@ -18,15 +18,27 @@ data class DuelSnapshot(
 
 class DuelEngine {
     private var state = DuelSnapshot()
-    private var lastDummyCastAtMs = 0L
+    private var lastTickAtMs: Long? = null
+    private var lastDummyCastAtMs: Long? = null
     private var nextDummyCastDelayMs = randomDummyDelay()
 
     fun snapshot(): DuelSnapshot = state
 
+    fun start(nowMs: Long): DuelSnapshot {
+        lastTickAtMs = nowMs
+        lastDummyCastAtMs = nowMs
+        return state
+    }
+
     fun tick(nowMs: Long): DuelSnapshot {
         if (state.isFinished) return state
 
-        val nextRemaining = (state.remainingMs - 1000L).coerceAtLeast(0L)
+        val elapsedMs = computeElapsedMs(nowMs)
+        if (elapsedMs <= 0L) return state
+
+        lastTickAtMs = nowMs
+
+        val nextRemaining = (state.remainingMs - elapsedMs).coerceAtLeast(0L)
         state = state.copy(remainingMs = nextRemaining)
 
         if (state.remainingMs == 0L) {
@@ -38,7 +50,8 @@ class DuelEngine {
             return state
         }
 
-        if (nowMs - lastDummyCastAtMs >= nextDummyCastDelayMs) {
+        val lastDummyCast = lastDummyCastAtMs
+        if (lastDummyCast != null && nowMs - lastDummyCast >= nextDummyCastDelayMs) {
             applyDummyCast()
             lastDummyCastAtMs = nowMs
             nextDummyCastDelayMs = randomDummyDelay()
@@ -49,6 +62,11 @@ class DuelEngine {
         }
 
         return state
+    }
+
+    private fun computeElapsedMs(nowMs: Long): Long {
+        val lastTick = lastTickAtMs ?: return 0L
+        return (nowMs - lastTick).coerceAtLeast(0L)
     }
 
     fun applyPlayerSpell(spell: Spell): DuelSnapshot {
