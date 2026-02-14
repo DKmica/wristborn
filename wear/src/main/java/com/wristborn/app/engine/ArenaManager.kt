@@ -9,6 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.wristborn.app.ble.BleManager
+import com.wristborn.app.data.ProgressionManager
 import com.wristborn.app.haptics.ElementHapticsPlayer
 import com.wristborn.app.sensors.GestureRecognizer
 import com.wristborn.app.sensors.GestureType
@@ -21,6 +22,8 @@ class ArenaManager(context: Context) : SensorEventListener {
     private val recognizer = GestureRecognizer()
     private val haptics = ElementHapticsPlayer(context)
     val bleManager = BleManager(context)
+    val pvpManager = PvPManager(bleManager)
+    val progressionManager = ProgressionManager(context)
 
     var isArmed by mutableStateOf(false)
         private set
@@ -38,6 +41,7 @@ class ArenaManager(context: Context) : SensorEventListener {
         } else {
             sensorManager.unregisterListener(this)
             bleManager.stopDiscovery()
+            pvpManager.reset()
             lastGesture = null
         }
     }

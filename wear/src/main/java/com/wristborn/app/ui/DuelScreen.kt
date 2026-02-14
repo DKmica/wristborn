@@ -89,7 +89,7 @@ fun DuelScreen(onBack: () -> Unit) {
                     Spacer(modifier = Modifier.width(16.dp))
                     Text("vs", style = MaterialTheme.typography.caption2)
                     Spacer(modifier = Modifier.width(16.dp))
-                    Text("Dummy: ${duel.dummyHp}", color = Color.Red)
+                    Text("Dummy: ${duel.opponentHp}", color = Color.Red)
                 }
             }
 

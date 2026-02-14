@@ -5,20 +5,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.*
 import androidx.wear.compose.material.dialog.Alert
 import androidx.wear.compose.material.dialog.Dialog
 import com.wristborn.app.engine.ArenaManager
+import com.wristborn.app.engine.PvPStatus
 
 @Composable
 fun ArenaIdleScreen(
+    arenaManager: ArenaManager,
     onTraining: () -> Unit,
-    onPractice: () -> Unit
+    onPractice: () -> Unit,
+    onPvPDuel: () -> Unit,
+    onProfile: () -> Unit,
+    onDailyTrial: () -> Unit
 ) {
-    val context = LocalContext.current
-    val arenaManager = remember { ArenaManager(context) }
     val listState = rememberScalingLazyListState()
     
     // Proximity Dialog State
@@ -28,6 +30,13 @@ fun ArenaIdleScreen(
     LaunchedEffect(duelistName) {
         if (duelistName != null) {
             showProximityAlert = true
+        }
+    }
+
+    // Auto-navigate to Duel if PvP status is ACTIVE
+    LaunchedEffect(arenaManager.pvpManager.status) {
+        if (arenaManager.pvpManager.status == PvPStatus.ACTIVE) {
+            onPvPDuel()
         }
     }
 
@@ -65,6 +74,11 @@ fun ArenaIdleScreen(
                         style = MaterialTheme.typography.body2
                     )
                 }
+                
+                if (arenaManager.pvpManager.status == PvPStatus.NEGOTIATING) {
+                    item { CircularProgressIndicator() }
+                    item { Text("Connecting...", style = MaterialTheme.typography.caption2) }
+                }
             }
 
             item {
@@ -76,6 +90,18 @@ fun ArenaIdleScreen(
             item {
                 Button(onClick = onPractice, modifier = Modifier.fillMaxWidth(0.8f)) {
                     Text("Practice Duel")
+                }
+            }
+
+            item {
+                Button(onClick = onDailyTrial, modifier = Modifier.fillMaxWidth(0.8f)) {
+                    Text("Daily Trial")
+                }
+            }
+
+            item {
+                Button(onClick = onProfile, modifier = Modifier.fillMaxWidth(0.8f)) {
+                    Text("Profile")
                 }
             }
         }
@@ -93,8 +119,15 @@ fun ArenaIdleScreen(
                 content = { Text(duelistName ?: "Unknown") },
                 positiveButton = {
                     Button(onClick = { 
-                        showProximityAlert = false 
-                        onPractice() // For MVP, we bridge to Practice mode
+                        showProximityAlert = false
+                        // Start real GATT connection and handshake
+                        val device = arenaManager.bleManager.discoveredDevice
+                        if (device != null) {
+                            arenaManager.bleManager.connectToDuelist(device) { event ->
+                                arenaManager.pvpManager.onEventReceived(event)
+                            }
+                            arenaManager.pvpManager.startHandshake()
+                        }
                     }) {
                         Text("Duel")
                     }

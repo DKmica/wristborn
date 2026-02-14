@@ -67,19 +67,17 @@ dependencies {
     // Wear Compose UI
     implementation("androidx.wear.compose:compose-material:1.4.1")
     implementation("androidx.wear.compose:compose-foundation:1.4.1")
-
-    // ✅ Wear swipe-dismiss navigation (fixes rememberSwipeDismissableNavController, SwipeDismissableNavHost, composable)
     implementation("androidx.wear.compose:compose-navigation:1.4.1")
 
-    // Optional: standard navigation-compose (safe to keep, we can remove later if you want)
+    // Navigation
     implementation("androidx.navigation:navigation-compose:2.8.0")
 
-    // Tiles (template)
+    // Tiles & Complications
     implementation("androidx.wear.tiles:tiles:1.3.0")
     implementation("androidx.wear.tiles:tiles-material:1.3.0")
     debugImplementation("androidx.wear.tiles:tiles-tooling-preview:1.3.0")
-
-    // Complication data source (template)
     implementation("androidx.wear.watchface:watchface-complications-data-source:1.2.1")
-}
 
+    // DataStore (Phase 3)
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+}

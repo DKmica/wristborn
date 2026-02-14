@@ -1,5 +1,6 @@
 package com.wristborn.app.engine
 
+import com.wristborn.app.ble.DuelEvent
 import kotlin.random.Random
 
 private const val BASE_DURATION_MS = 60_000L
@@ -7,18 +8,21 @@ private const val SUDDEN_DEATH_MS = 10_000L
 
 data class DuelSnapshot(
     val playerHp: Int = 100,
-    val dummyHp: Int = 100,
+    val opponentHp: Int = 100, // Renamed from dummyHp
     val playerMana: Int = 100,
-    val dummyMana: Int = 100,
+    val opponentMana: Int = 100, // Renamed from dummyMana
     val remainingMs: Long = BASE_DURATION_MS,
     val inSuddenDeath: Boolean = false,
     val isFinished: Boolean = false,
-    val logLine: String = "Duel started"
+    val logLine: String = "Duel started",
+    val isPvP: Boolean = false
 )
 
-class DuelEngine {
-    private var state = DuelSnapshot()
+class DuelEngine(val isPvP: Boolean = false) {
+    private var state = DuelSnapshot(isPvP = isPvP)
     private var lastTickAtMs: Long? = null
+    
+    // For Dummy AI
     private var lastDummyCastAtMs: Long? = null
     private var nextDummyCastDelayMs = randomDummyDelay()
 
@@ -31,7 +35,7 @@ class DuelEngine {
         if (elapsedMs <= 0L) {
             if (lastTickAtMs == null) {
                 lastTickAtMs = nowMs
-                lastDummyCastAtMs = nowMs
+                if (!isPvP) lastDummyCastAtMs = nowMs
             }
             return state
         }
@@ -42,7 +46,7 @@ class DuelEngine {
         state = state.copy(remainingMs = nextRemaining)
 
         if (state.remainingMs == 0L) {
-            if (!state.inSuddenDeath && state.playerHp == state.dummyHp) {
+            if (!state.inSuddenDeath && state.playerHp == state.opponentHp) {
                 state = state.copy(inSuddenDeath = true, remainingMs = SUDDEN_DEATH_MS, logLine = "Sudden death!")
             } else {
                 state = state.copy(isFinished = true, logLine = winnerLine())
@@ -50,14 +54,17 @@ class DuelEngine {
             return state
         }
 
-        val lastDummyCast = lastDummyCastAtMs
-        if (lastDummyCast != null && nowMs - lastDummyCast >= nextDummyCastDelayMs) {
-            applyDummyCast()
-            lastDummyCastAtMs = nowMs
-            nextDummyCastDelayMs = randomDummyDelay()
+        // Only run Dummy AI if not in PvP
+        if (!isPvP) {
+            val lastDummyCast = lastDummyCastAtMs
+            if (lastDummyCast != null && nowMs - lastDummyCast >= nextDummyCastDelayMs) {
+                applyDummyCast()
+                lastDummyCastAtMs = nowMs
+                nextDummyCastDelayMs = randomDummyDelay()
+            }
         }
 
-        if (state.playerHp <= 0 || state.dummyHp <= 0) {
+        if (state.playerHp <= 0 || state.opponentHp <= 0) {
             state = state.copy(isFinished = true, logLine = winnerLine())
         }
 
@@ -84,20 +91,41 @@ class DuelEngine {
 
         state = state.copy(
             playerMana = (state.playerMana - manaCost).coerceAtLeast(0),
-            dummyHp = (state.dummyHp - damage).coerceAtLeast(0),
-            logLine = "You hit dummy for $damage"
+            opponentHp = (state.opponentHp - damage).coerceAtLeast(0),
+            logLine = "You hit for $damage"
         )
-        if (state.dummyHp <= 0) {
+        checkFinish()
+        return state
+    }
+
+    fun applyOpponentEvent(event: DuelEvent): DuelSnapshot {
+        if (state.isFinished) return state
+        
+        state = when (event.type) {
+            com.wristborn.app.ble.EventType.SPELL_CAST -> {
+                state.copy(
+                    playerHp = (state.playerHp - event.damage).coerceAtLeast(0),
+                    opponentMana = (state.opponentMana - 10).coerceAtLeast(0), // Simplified mana
+                    logLine = "Opponent hit for ${event.damage}"
+                )
+            }
+            else -> state
+        }
+        checkFinish()
+        return state
+    }
+
+    private fun checkFinish() {
+        if (state.playerHp <= 0 || state.opponentHp <= 0) {
             state = state.copy(isFinished = true, logLine = winnerLine())
         }
-        return state
     }
 
     private fun applyDummyCast() {
         val damage = Random.nextInt(10, 18)
         state = state.copy(
             playerHp = (state.playerHp - damage).coerceAtLeast(0),
-            dummyMana = (state.dummyMana - 8).coerceAtLeast(0),
+            opponentMana = (state.opponentMana - 8).coerceAtLeast(0),
             logLine = "Dummy hits for $damage"
         )
     }
@@ -105,8 +133,8 @@ class DuelEngine {
     private fun randomDummyDelay(): Long = Random.nextLong(2200L, 4200L)
 
     private fun winnerLine(): String = when {
-        state.playerHp > state.dummyHp -> "Victory"
-        state.playerHp < state.dummyHp -> "Defeat"
+        state.playerHp > state.opponentHp -> "Victory"
+        state.playerHp < state.opponentHp -> "Defeat"
         else -> "Draw"
     }
 }

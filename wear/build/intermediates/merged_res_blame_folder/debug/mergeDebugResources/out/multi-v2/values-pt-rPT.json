@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.wristborn.app.wear-mergeDebugResources-69:/values-pt-rPT/values-pt-rPT.xml",
+            "outputFile": "com.wristborn.app.wear-mergeDebugResources-72:/values-pt-rPT/values-pt-rPT.xml",
             "map": [
                 {
                     "source": "C:\\Users\\dakoe\\.gradle\\caches\\9.2.1\\transforms\\6456cd67b02691ce20b14b6e3ab6c6da\\workspace\\transformed\\watchface-complications-data-1.2.1\\res\\values-pt-rPT\\values-pt-rPT.xml",

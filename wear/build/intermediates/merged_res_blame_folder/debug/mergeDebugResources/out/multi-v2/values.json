@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.wristborn.app.wear-mergeDebugResources-69:/values/values.xml",
+            "outputFile": "com.wristborn.app.wear-mergeDebugResources-72:/values/values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\dakoe\\.gradle\\caches\\9.2.1\\transforms\\b6899ee7735ca5596e3f719f39b8f297\\workspace\\transformed\\lifecycle-runtime-release\\res\\values\\values.xml",
