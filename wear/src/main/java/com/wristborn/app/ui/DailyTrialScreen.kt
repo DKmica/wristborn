@@ -21,7 +21,6 @@ fun DailyTrialScreen(
 ) {
     val context = LocalContext.current
     val haptics = remember { ElementHapticsPlayer(context) }
-    val scope = rememberCoroutineScope()
     
     var score by remember { mutableIntStateOf(0) }
     var timeLeftMs by remember { mutableLongStateOf(30000L) }
@@ -30,7 +29,6 @@ fun DailyTrialScreen(
     
     // Casting State
     var sigilSequence by remember { mutableStateOf(listOf<SigilToken>()) }
-    var detectedElement by remember { mutableStateOf<Element?>(null) }
 
     // Activate sensors
     DisposableEffect(Unit) {
@@ -68,7 +66,6 @@ fun DailyTrialScreen(
                 haptics.playReleaseConfirm(element)
                 targetElement = Element.entries.random()
                 sigilSequence = emptyList()
-                detectedElement = null
             }
         }
     }
@@ -90,8 +87,7 @@ fun DailyTrialScreen(
                 SigilField(
                     onTokenCaptured = { token ->
                         sigilSequence = (sigilSequence + token).takeLast(1)
-                    },
-                    modifier = Modifier.size(60.dp)
+                    }
                 )
             } else {
                 Text("Trial Finished!", style = MaterialTheme.typography.title3)

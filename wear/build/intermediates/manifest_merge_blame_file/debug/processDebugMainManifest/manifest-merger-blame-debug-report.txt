@@ -78,158 +78,157 @@
 43-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:18:9-34
 44        android:supportsRtl="true"
 44-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:19:9-35
-45        android:testOnly="true"
-46        android:theme="@android:style/Theme.DeviceDefault" >
-46-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:20:9-59
-47        <activity
-47-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:22:9-29:20
-48            android:name="com.wristborn.app.MainActivity"
-48-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:23:13-41
-49            android:exported="true" >
-49-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:24:13-36
-50            <intent-filter>
-50-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:25:13-28:29
-51                <action android:name="android.intent.action.MAIN" />
-51-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:26:17-69
-51-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:26:25-66
-52
-53                <category android:name="android.intent.category.LAUNCHER" />
-53-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:27:17-77
-53-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:27:27-74
-54            </intent-filter>
-55        </activity>
-56
-57        <service
-57-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:31:9-38:19
-58            android:name="com.wristborn.app.ArenaTileService"
-58-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:32:13-45
-59            android:exported="true"
-59-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:33:13-36
-60            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER" >
-60-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:34:13-91
-61            <intent-filter>
-61-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:35:13-37:29
-62                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
-62-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:36:17-88
-62-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:36:25-85
-63            </intent-filter>
-64        </service>
-65        <service
-65-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:40:9-55:19
-66            android:name="com.wristborn.app.WristbornComplicationService"
-66-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:41:13-57
-67            android:exported="true"
-67-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:42:13-36
-68            android:label="Wristborn Status"
-68-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:43:13-45
-69            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER" >
-69-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:44:13-99
-70            <intent-filter>
-70-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:45:13-47:29
-71                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
-71-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:46:17-116
-71-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:46:25-113
-72            </intent-filter>
-73
-74            <meta-data
-74-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:49:13-51:46
-75                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
-75-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:50:17-86
-76                android:value="SHORT_TEXT" />
-76-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:51:17-43
-77            <meta-data
-77-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:52:13-54:37
-78                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
-78-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:53:17-92
-79                android:value="0" />
-79-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:54:17-34
-80        </service>
-81
-82        <uses-library
-82-->[androidx.wear.compose:compose-foundation:1.4.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\3edb4aea9fdb15f0a89696086e81cde8\workspace\transformed\compose-foundation-1.4.1\AndroidManifest.xml:23:9-25:40
-83            android:name="wear-sdk"
-83-->[androidx.wear.compose:compose-foundation:1.4.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\3edb4aea9fdb15f0a89696086e81cde8\workspace\transformed\compose-foundation-1.4.1\AndroidManifest.xml:24:13-36
-84            android:required="false" />
-84-->[androidx.wear.compose:compose-foundation:1.4.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\3edb4aea9fdb15f0a89696086e81cde8\workspace\transformed\compose-foundation-1.4.1\AndroidManifest.xml:25:13-37
-85        <uses-library
-85-->[androidx.wear.watchface:watchface-complications-data:1.2.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\6456cd67b02691ce20b14b6e3ab6c6da\workspace\transformed\watchface-complications-data-1.2.1\AndroidManifest.xml:8:9-10:40
-86            android:name="com.google.android.wearable"
-86-->[androidx.wear.watchface:watchface-complications-data:1.2.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\6456cd67b02691ce20b14b6e3ab6c6da\workspace\transformed\watchface-complications-data-1.2.1\AndroidManifest.xml:9:13-55
-87            android:required="false" />
-87-->[androidx.wear.watchface:watchface-complications-data:1.2.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\6456cd67b02691ce20b14b6e3ab6c6da\workspace\transformed\watchface-complications-data-1.2.1\AndroidManifest.xml:10:13-37
-88
-89        <provider
-89-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
-90            android:name="androidx.startup.InitializationProvider"
-90-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
-91            android:authorities="com.wristborn.app.androidx-startup"
-91-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
-92            android:exported="false" >
-92-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
-93            <meta-data
-93-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-94                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-94-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
-95                android:value="androidx.startup" />
-95-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
-96            <meta-data
-96-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\ec0513a8edc5313948d1771edf440f8b\workspace\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:29:13-31:52
-97                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-97-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\ec0513a8edc5313948d1771edf440f8b\workspace\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:30:17-78
-98                android:value="androidx.startup" />
-98-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\ec0513a8edc5313948d1771edf440f8b\workspace\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:31:17-49
-99            <meta-data
-99-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
-100                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
-101                android:value="androidx.startup" />
-101-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
-102        </provider>
-103
-104        <activity
-104-->[androidx.compose.ui:ui-tooling-android:1.7.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\f818c13f4c8edff4cdf6e9e2627e7c47\workspace\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
-105            android:name="androidx.compose.ui.tooling.PreviewActivity"
-105-->[androidx.compose.ui:ui-tooling-android:1.7.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\f818c13f4c8edff4cdf6e9e2627e7c47\workspace\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
-106            android:exported="true" />
-106-->[androidx.compose.ui:ui-tooling-android:1.7.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\f818c13f4c8edff4cdf6e9e2627e7c47\workspace\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
-107
-108        <receiver
-108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
-109            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
-110            android:directBootAware="false"
-110-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
-111            android:enabled="true"
-111-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
-112            android:exported="true"
-112-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
-113            android:permission="android.permission.DUMP" >
-113-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
-114            <intent-filter>
-114-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
-115                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-115-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
-115-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
-116            </intent-filter>
-117            <intent-filter>
-117-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
-118                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-118-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
-118-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
-119            </intent-filter>
-120            <intent-filter>
-120-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
-121                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-121-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
-121-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
-122            </intent-filter>
-123            <intent-filter>
-123-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
-124                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
-124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
-125            </intent-filter>
-126        </receiver>
-127    </application>
-128
-129</manifest>
+45        android:theme="@android:style/Theme.DeviceDefault" >
+45-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:20:9-59
+46        <activity
+46-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:22:9-29:20
+47            android:name="com.wristborn.app.MainActivity"
+47-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:23:13-41
+48            android:exported="true" >
+48-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:24:13-36
+49            <intent-filter>
+49-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:25:13-28:29
+50                <action android:name="android.intent.action.MAIN" />
+50-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:26:17-69
+50-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:26:25-66
+51
+52                <category android:name="android.intent.category.LAUNCHER" />
+52-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:27:17-77
+52-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:27:27-74
+53            </intent-filter>
+54        </activity>
+55
+56        <service
+56-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:31:9-38:19
+57            android:name="com.wristborn.app.ArenaTileService"
+57-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:32:13-45
+58            android:exported="true"
+58-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:33:13-36
+59            android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER" >
+59-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:34:13-91
+60            <intent-filter>
+60-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:35:13-37:29
+61                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER" />
+61-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:36:17-88
+61-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:36:25-85
+62            </intent-filter>
+63        </service>
+64        <service
+64-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:40:9-55:19
+65            android:name="com.wristborn.app.WristbornComplicationService"
+65-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:41:13-57
+66            android:exported="true"
+66-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:42:13-36
+67            android:label="Wristborn Status"
+67-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:43:13-45
+68            android:permission="com.google.android.wearable.permission.BIND_COMPLICATION_PROVIDER" >
+68-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:44:13-99
+69            <intent-filter>
+69-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:45:13-47:29
+70                <action android:name="android.support.wearable.complications.ACTION_COMPLICATION_UPDATE_REQUEST" />
+70-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:46:17-116
+70-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:46:25-113
+71            </intent-filter>
+72
+73            <meta-data
+73-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:49:13-51:46
+74                android:name="android.support.wearable.complications.SUPPORTED_TYPES"
+74-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:50:17-86
+75                android:value="SHORT_TEXT" />
+75-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:51:17-43
+76            <meta-data
+76-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:52:13-54:37
+77                android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
+77-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:53:17-92
+78                android:value="0" />
+78-->C:\Users\dakoe\AndroidStudioProjects\wristborn\wear\src\main\AndroidManifest.xml:54:17-34
+79        </service>
+80
+81        <uses-library
+81-->[androidx.wear.compose:compose-foundation:1.4.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\3edb4aea9fdb15f0a89696086e81cde8\workspace\transformed\compose-foundation-1.4.1\AndroidManifest.xml:23:9-25:40
+82            android:name="wear-sdk"
+82-->[androidx.wear.compose:compose-foundation:1.4.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\3edb4aea9fdb15f0a89696086e81cde8\workspace\transformed\compose-foundation-1.4.1\AndroidManifest.xml:24:13-36
+83            android:required="false" />
+83-->[androidx.wear.compose:compose-foundation:1.4.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\3edb4aea9fdb15f0a89696086e81cde8\workspace\transformed\compose-foundation-1.4.1\AndroidManifest.xml:25:13-37
+84        <uses-library
+84-->[androidx.wear.watchface:watchface-complications-data:1.2.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\6456cd67b02691ce20b14b6e3ab6c6da\workspace\transformed\watchface-complications-data-1.2.1\AndroidManifest.xml:8:9-10:40
+85            android:name="com.google.android.wearable"
+85-->[androidx.wear.watchface:watchface-complications-data:1.2.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\6456cd67b02691ce20b14b6e3ab6c6da\workspace\transformed\watchface-complications-data-1.2.1\AndroidManifest.xml:9:13-55
+86            android:required="false" />
+86-->[androidx.wear.watchface:watchface-complications-data:1.2.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\6456cd67b02691ce20b14b6e3ab6c6da\workspace\transformed\watchface-complications-data-1.2.1\AndroidManifest.xml:10:13-37
+87
+88        <provider
+88-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+89            android:name="androidx.startup.InitializationProvider"
+89-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+90            android:authorities="com.wristborn.app.androidx-startup"
+90-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+91            android:exported="false" >
+91-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+92            <meta-data
+92-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+93                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+93-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+94                android:value="androidx.startup" />
+94-->[androidx.emoji2:emoji2:1.3.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\1d46d5b2a75f994a282a8fb097d1eee6\workspace\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+95            <meta-data
+95-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\ec0513a8edc5313948d1771edf440f8b\workspace\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:29:13-31:52
+96                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+96-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\ec0513a8edc5313948d1771edf440f8b\workspace\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:30:17-78
+97                android:value="androidx.startup" />
+97-->[androidx.lifecycle:lifecycle-process:2.8.4] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\ec0513a8edc5313948d1771edf440f8b\workspace\transformed\lifecycle-process-2.8.4\AndroidManifest.xml:31:17-49
+98            <meta-data
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+99                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+99-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+100                android:value="androidx.startup" />
+100-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+101        </provider>
+102
+103        <activity
+103-->[androidx.compose.ui:ui-tooling-android:1.7.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\f818c13f4c8edff4cdf6e9e2627e7c47\workspace\transformed\ui-tooling-release\AndroidManifest.xml:23:9-25:39
+104            android:name="androidx.compose.ui.tooling.PreviewActivity"
+104-->[androidx.compose.ui:ui-tooling-android:1.7.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\f818c13f4c8edff4cdf6e9e2627e7c47\workspace\transformed\ui-tooling-release\AndroidManifest.xml:24:13-71
+105            android:exported="true" />
+105-->[androidx.compose.ui:ui-tooling-android:1.7.0] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\f818c13f4c8edff4cdf6e9e2627e7c47\workspace\transformed\ui-tooling-release\AndroidManifest.xml:25:13-36
+106
+107        <receiver
+107-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+108            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+109            android:directBootAware="false"
+109-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+110            android:enabled="true"
+110-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+111            android:exported="true"
+111-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+112            android:permission="android.permission.DUMP" >
+112-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+113            <intent-filter>
+113-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+114                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+114-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+114-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+115            </intent-filter>
+116            <intent-filter>
+116-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+117                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+117-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+117-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+118            </intent-filter>
+119            <intent-filter>
+119-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+120                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+120-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+120-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+121            </intent-filter>
+122            <intent-filter>
+122-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+123                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+123-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+123-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\dakoe\.gradle\caches\9.2.1\transforms\690267ddda29019a517a7108462d771b\workspace\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+124            </intent-filter>
+125        </receiver>
+126    </application>
+127
+128</manifest>

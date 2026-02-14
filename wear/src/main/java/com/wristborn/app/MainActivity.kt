@@ -17,6 +17,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
@@ -77,7 +79,11 @@ fun WristbornApp() {
     }
 
     if (permissionsGranted) {
-        val startDest = if (progression.hasCompletedOnboarding) Routes.ARENA else Routes.ONBOARDING
+        val startDest = if (progression.hasCompletedOnboarding) {
+            if (FeatureFlags.V1_VIRAL_MODE) Routes.ARENA_V1 else Routes.ARENA
+        } else {
+            Routes.ONBOARDING
+        }
 
         SwipeDismissableNavHost(
             navController = navController,
@@ -87,12 +93,14 @@ fun WristbornApp() {
                 OnboardingScreen(onComplete = {
                     scope.launch {
                         arenaManager.progressionManager.completeOnboarding()
-                        navController.navigate(Routes.ARENA) {
+                        val target = if (FeatureFlags.V1_VIRAL_MODE) Routes.ARENA_V1 else Routes.ARENA
+                        navController.navigate(target) {
                             popUpTo(Routes.ONBOARDING) { inclusive = true }
                         }
                     }
                 })
             }
+            
             composable(Routes.ARENA) {
                 ArenaIdleScreen(
                     arenaManager = arenaManager,
@@ -125,6 +133,45 @@ fun WristbornApp() {
                 DailyTrialScreen(
                     arenaManager = arenaManager,
                     onBack = { navController.popBackStack() }
+                )
+            }
+
+            // Viral V1 Routes
+            composable(Routes.ARENA_V1) {
+                ArenaV1Screen(
+                    arenaManager = arenaManager,
+                    onPractice = { navController.navigate(Routes.DUEL_V1) },
+                    onProfile = { navController.navigate(Routes.PROFILE) },
+                    onPvPDuel = { navController.navigate(Routes.PVP_DUEL_V1) }
+                )
+            }
+            composable(Routes.DUEL_V1) {
+                DuelV1Screen(
+                    arenaManager = arenaManager,
+                    onBack = { navController.popBackStack() },
+                    onResult = { winner -> navController.navigate(Routes.resultV1(winner)) }
+                )
+            }
+            composable(Routes.PVP_DUEL_V1) {
+                PvPDuelV1Screen(
+                    arenaManager = arenaManager,
+                    onBack = { navController.popBackStack() },
+                    onResult = { winner -> navController.navigate(Routes.resultV1(winner)) }
+                )
+            }
+            composable(
+                route = Routes.RESULT_V1,
+                arguments = listOf(navArgument("winner") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val winner = backStackEntry.arguments?.getString("winner") ?: "DRAW"
+                ResultV1Screen(
+                    arenaManager = arenaManager,
+                    winner = winner,
+                    onRematch = { 
+                        navController.popBackStack(Routes.ARENA_V1, false)
+                        navController.navigate(Routes.DUEL_V1) 
+                    },
+                    onClose = { navController.popBackStack(Routes.ARENA_V1, false) }
                 )
             }
         }

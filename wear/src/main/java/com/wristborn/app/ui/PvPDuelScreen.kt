@@ -117,8 +117,7 @@ fun PvPDuelScreen(
                         onTokenCaptured = { token ->
                             sigilSequence = (sigilSequence + token).takeLast(4)
                             formTaps++
-                        },
-                        modifier = Modifier.size(80.dp)
+                        }
                     )
                 }
                 

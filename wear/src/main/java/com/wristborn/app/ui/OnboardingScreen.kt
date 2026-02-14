@@ -32,7 +32,10 @@ fun OnboardingScreen(onComplete: () -> Unit) {
                     Text("The Sigil", color = Color.Cyan)
                     Text("Tap the center field.", textAlign = androidx.compose.ui.text.style.TextAlign.Center)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SigilField(onTokenCaptured = { step++ }, modifier = Modifier.size(60.dp))
+                    SigilField(
+                        modifier = Modifier.size(60.dp),
+                        onTokenCaptured = { step++ }
+                    )
                 }
                 2 -> {
                     Text("The Gesture", color = Color.Yellow)

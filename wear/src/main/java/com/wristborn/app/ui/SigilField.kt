@@ -3,7 +3,6 @@ package com.wristborn.app.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.*
@@ -16,8 +15,9 @@ import com.wristborn.app.engine.SigilToken
 
 @Composable
 fun SigilField(
+    modifier: Modifier = Modifier,
     onTokenCaptured: (SigilToken) -> Unit,
-    modifier: Modifier = Modifier
+    onTap: () -> Unit = {}
 ) {
     var isPressed by remember { mutableStateOf(false) }
 
@@ -33,6 +33,7 @@ fun SigilField(
                     onPress = {
                         isPressed = true
                         val startTime = System.currentTimeMillis()
+                        onTap()
                         try {
                             awaitRelease()
                             val duration = System.currentTimeMillis() - startTime

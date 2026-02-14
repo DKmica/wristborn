@@ -13,5 +13,9 @@ data class ProgressionData(
     val totalWins: Int = 0,
     val dailyTrialHighscore: Int = 0,
     val lastTrialDate: Long = 0,
-    val hasCompletedOnboarding: Boolean = false
+    val hasCompletedOnboarding: Boolean = false,
+    
+    // Viral V1 Fields
+    val affinity: String? = null,
+    val shareCode: String? = null
 )

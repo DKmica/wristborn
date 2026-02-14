@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.wristborn.app.engine.Element
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlin.random.Random
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "progression")
 
@@ -26,6 +27,10 @@ class ProgressionManager(private val context: Context) {
         val DAILY_TRIAL_HIGHSCORE = intPreferencesKey("daily_trial_highscore")
         val LAST_TRIAL_DATE = longPreferencesKey("last_trial_date")
         val HAS_COMPLETED_ONBOARDING = booleanPreferencesKey("has_completed_onboarding")
+        
+        // Viral V1 Keys
+        val AFFINITY = stringPreferencesKey("affinity")
+        val SHARE_CODE = stringPreferencesKey("share_code")
     }
 
     val progressionFlow: Flow<ProgressionData> = context.dataStore.data.map { preferences ->
@@ -42,14 +47,36 @@ class ProgressionManager(private val context: Context) {
             winStreak = preferences[PreferencesKeys.WIN_STREAK] ?: 0,
             dailyTrialHighscore = preferences[PreferencesKeys.DAILY_TRIAL_HIGHSCORE] ?: 0,
             lastTrialDate = preferences[PreferencesKeys.LAST_TRIAL_DATE] ?: 0,
-            hasCompletedOnboarding = preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] ?: false
+            hasCompletedOnboarding = preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] ?: false,
+            affinity = preferences[PreferencesKeys.AFFINITY],
+            shareCode = preferences[PreferencesKeys.SHARE_CODE]
         )
     }
 
     suspend fun completeOnboarding() {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.HAS_COMPLETED_ONBOARDING] = true
+            // Auto-assign affinity if not set
+            if (preferences[PreferencesKeys.AFFINITY] == null) {
+                val elements = listOf("FIRE", "WIND", "EARTH")
+                preferences[PreferencesKeys.AFFINITY] = elements.random()
+            }
+            // Generate share code if not set
+            if (preferences[PreferencesKeys.SHARE_CODE] == null) {
+                preferences[PreferencesKeys.SHARE_CODE] = generateCode()
+            }
         }
+    }
+
+    suspend fun setAffinity(affinity: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.AFFINITY] = affinity
+        }
+    }
+
+    private fun generateCode(): String {
+        val chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+        return (1..6).map { chars[Random.nextInt(chars.length)] }.joinToString("")
     }
 
     suspend fun addXp(amount: Long) {
@@ -68,7 +95,7 @@ class ProgressionManager(private val context: Context) {
         }
     }
 
-    suspend fun resetStreak() {
+    suspend fun recordLoss() {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.WIN_STREAK] = 0
         }
