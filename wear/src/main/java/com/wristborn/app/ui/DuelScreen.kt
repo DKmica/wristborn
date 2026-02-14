@@ -1,84 +1,145 @@
 package com.wristborn.app.ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.ScalingLazyColumn
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.Vignette
-import androidx.wear.compose.material.VignettePosition
-import androidx.wear.compose.material.rememberScalingLazyListState
-import com.wristborn.app.engine.DuelEngine
-import com.wristborn.app.engine.FormType
-import com.wristborn.app.engine.SigilToken
-import com.wristborn.app.engine.Spell
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material.*
+import com.wristborn.app.engine.*
+import com.wristborn.app.haptics.ElementHapticsPlayer
 import com.wristborn.app.sensors.GestureType
 import kotlinx.coroutines.delay
 
 @Composable
 fun DuelScreen(onBack: () -> Unit) {
+    val context = LocalContext.current
+    val arenaManager = remember { ArenaManager(context) }
+    val haptics = remember { ElementHapticsPlayer(context) }
     val listState = rememberScalingLazyListState()
     var duelEngine by remember { mutableStateOf(DuelEngine()) }
     var duel by remember { mutableStateOf(duelEngine.snapshot()) }
 
+    // Casting State
+    var sigilSequence by remember { mutableStateOf(listOf<SigilToken>()) }
+    var detectedElement by remember { mutableStateOf<Element?>(null) }
+    var formTaps by remember { mutableIntStateOf(0) }
+
+    // Activate sensors when in Duel
+    DisposableEffect(Unit) {
+        arenaManager.updateArmedState(true)
+        onDispose { arenaManager.updateArmedState(false) }
+    }
+
+    // Sync detection
+    LaunchedEffect(arenaManager.lastGesture) {
+        val gesture = arenaManager.lastGesture
+        if (gesture != null) {
+            val element = when (gesture) {
+                GestureType.FLICK_RIGHT -> Element.FIRE
+                GestureType.FLICK_LEFT -> Element.WIND
+                GestureType.TWIST_CW -> Element.ARCANE
+                GestureType.TWIST_CCW -> Element.VOID
+                GestureType.SHAKE -> Element.STORM
+                GestureType.STEADY_HOLD -> Element.EARTH
+            }
+            if (detectedElement == null) {
+                detectedElement = element
+            } else if (detectedElement == element && sigilSequence.isNotEmpty()) {
+                // This counts as the "Release" if it's the same gesture again or a strong one
+                // For MVP: if we have Sigil + Element, any gesture acts as Release
+                val spell = Spell(
+                    sigil = sigilSequence,
+                    element = detectedElement!!,
+                    form = if (formTaps > 2) FormType.CHARGED else FormType.SINGLE,
+                    release = gesture,
+                    timestampMs = System.currentTimeMillis()
+                )
+                duel = duelEngine.applyPlayerSpell(spell)
+                haptics.playReleaseConfirm(detectedElement!!)
+                
+                // Reset casting state
+                sigilSequence = emptyList()
+                detectedElement = null
+                formTaps = 0
+            }
+        }
+    }
+
     LaunchedEffect(duel.isFinished) {
         while (!duel.isFinished) {
-            delay(1_000)
+            delay(500)
             duel = duelEngine.tick(System.currentTimeMillis())
         }
     }
 
-    fun cast(form: FormType) {
-        val spell = Spell(
-            sigil = listOf(SigilToken.SHORT, SigilToken.LONG),
-            element = com.wristborn.app.engine.Element.ARCANE,
-            form = form,
-            release = GestureType.TWIST_CW,
-            timestampMs = System.currentTimeMillis()
-        )
-        duel = duelEngine.applyPlayerSpell(spell)
-    }
-
     Scaffold(
-        timeText = { TimeText() },
-        vignette = { Vignette(vignettePosition = VignettePosition.TopAndBottom) },
-        positionIndicator = { PositionIndicator(scalingLazyListState = listState) }
+        timeText = { TimeText() }
     ) {
-        ScalingLazyColumn(state = listState) {
-            item { Text("Live Duel") }
-            item { Text("You ${duel.playerHp} HP • ${duel.playerMana} MP") }
-            item { Text("Dummy ${duel.dummyHp} HP • ${duel.dummyMana} MP") }
-            item { Text("${duel.remainingMs / 1000}s left") }
-            item { Text(if (duel.inSuddenDeath) "SUDDEN DEATH" else "") }
-            item { Text(duel.logLine) }
+        ScalingLazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("HP: ${duel.playerHp}", color = Color.Green)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text("vs", style = MaterialTheme.typography.caption2)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text("Dummy: ${duel.dummyHp}", color = Color.Red)
+                }
+            }
 
             item {
-                Button(onClick = { cast(FormType.SINGLE) }, enabled = !duel.isFinished) {
-                    Text("Quick Cast")
+                Text(
+                    text = "${duel.remainingMs / 1000}s",
+                    style = MaterialTheme.typography.title3
+                )
+            }
+
+            if (!duel.isFinished) {
+                item {
+                    SigilField(
+                        onTokenCaptured = { token ->
+                            sigilSequence = (sigilSequence + token).takeLast(4)
+                            formTaps++
+                        },
+                        modifier = Modifier.size(80.dp)
+                    )
+                }
+                
+                item {
+                    Text(
+                        text = when {
+                            detectedElement != null -> "Release ${detectedElement!!.name}!"
+                            sigilSequence.isNotEmpty() -> "Perform Gesture..."
+                            else -> "Tap Sigil to start"
+                        },
+                        style = MaterialTheme.typography.caption1,
+                        color = Color.Cyan
+                    )
+                }
+            } else {
+                item {
+                    Text(duel.logLine, style = MaterialTheme.typography.title2)
+                }
+                item {
+                    Button(onClick = {
+                        duelEngine = DuelEngine()
+                        duel = duelEngine.snapshot()
+                    }) {
+                        Text("Rematch")
+                    }
                 }
             }
+
             item {
-                Button(onClick = { cast(FormType.CHARGED) }, enabled = !duel.isFinished) {
-                    Text("Charged Cast")
+                Button(onClick = onBack, modifier = Modifier.padding(top = 8.dp)) {
+                    Text("Quit")
                 }
-            }
-            item {
-                Button(onClick = {
-                    duelEngine = DuelEngine()
-                    duel = duelEngine.snapshot()
-                }) {
-                    Text("Reset Duel")
-                }
-            }
-            item {
-                Button(onClick = onBack) { Text("Back") }
             }
         }
     }
